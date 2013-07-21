@@ -70,18 +70,9 @@ namespace SSLProxy
                     return;
                 }
 
-
-                //outboundSocket.Connect("157.56.163.183", 443, false, 10000);
-                //outboundSocket.Connect("96.43.148.92", 443, false, 10000);
-                
-                //BOX/VOZAA
-                //outboundSocket.Connect("184.173.20.253", 443, false, 10000);
-                // OWA
+                // malbot.net OWA
                 outboundSocket.Connect("157.56.163.101", 443, false, 10000);
                 
-                 //outboundSocket.Connect("96.43.145.46", 443, false, 10000);
-
-                //outboundSocket.Connect("www.hispla.com", 443, false, 10000);
                 if (success != true)
                 {
                     Console.WriteLine(listenSocket.LastErrorText + "\r\n");
