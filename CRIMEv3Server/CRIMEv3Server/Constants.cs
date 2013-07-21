@@ -50,7 +50,7 @@ var ta = document.getElementById('ta');
 
 // Update text
 var text = '## Attack payload sequence initiated...\n\n$ sudo make me a sandwhich\r\nmake: *** No rule to make target `me\'. ' +
-           'Stop.\n\n$ ./ShatterMilitaryGradeEncryption -crackSSL=true\n> Secret Extracted: !';
+           'Stop.\n\n$ ./BREACH -sniffSSL=true\n> Secret Extracted: !';
 
 // Start animating text (this function lives @ animate.js)
 setTimeout('animateText(ta, text)', 1000);
@@ -66,7 +66,7 @@ function updateTextArea()
 }
 
 // Interval to update textarea
-var tokenInProgressInterval = setInterval('updateTextArea()',253);
+var tokenInProgressInterval = setInterval('updateTextArea()',250);
 
 
 // CORS CSRF Attack
