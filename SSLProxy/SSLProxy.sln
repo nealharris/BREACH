@@ -1,18 +1,24 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSLProxy", "SSLProxy\SSLProxy.csproj", "{CF55C873-6C1B-4A63-8750-AD8D861D066A}"
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSLProxy", "SSLProxy\SSLProxy.csproj", "{4936C777-2F91-4D28-9CDF-9B8DCB711B31}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x86 = Debug|x86
+		Release|Any CPU = Release|Any CPU
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{CF55C873-6C1B-4A63-8750-AD8D861D066A}.Debug|x86.ActiveCfg = Debug|x86
-		{CF55C873-6C1B-4A63-8750-AD8D861D066A}.Debug|x86.Build.0 = Debug|x86
-		{CF55C873-6C1B-4A63-8750-AD8D861D066A}.Release|x86.ActiveCfg = Release|x86
-		{CF55C873-6C1B-4A63-8750-AD8D861D066A}.Release|x86.Build.0 = Release|x86
+		{4936C777-2F91-4D28-9CDF-9B8DCB711B31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4936C777-2F91-4D28-9CDF-9B8DCB711B31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4936C777-2F91-4D28-9CDF-9B8DCB711B31}.Debug|x86.ActiveCfg = Debug|x86
+		{4936C777-2F91-4D28-9CDF-9B8DCB711B31}.Debug|x86.Build.0 = Debug|x86
+		{4936C777-2F91-4D28-9CDF-9B8DCB711B31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4936C777-2F91-4D28-9CDF-9B8DCB711B31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4936C777-2F91-4D28-9CDF-9B8DCB711B31}.Release|x86.ActiveCfg = Release|x86
+		{4936C777-2F91-4D28-9CDF-9B8DCB711B31}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("SSLProxy")]
+[assembly: AssemblyTitle("BREACH Basic")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("SSLProxy")]
+[assembly: AssemblyProduct("BREACH Basic")]
 [assembly: AssemblyCopyright("Copyright ©  2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("3de78fc6-d826-49ea-8def-ed14d2a3d4ea")]
+[assembly: Guid("750c4634-7bb7-4420-917b-1613e64c7a1c")]
 
 // Version information for an assembly consists of the following four values:
 //
