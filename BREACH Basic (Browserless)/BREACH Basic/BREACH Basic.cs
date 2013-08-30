@@ -141,7 +141,7 @@ namespace BREACHBasic
 
 
             WriteConsoleSuccess("\n\n\n ------------- GREAT SUCCESS WITH " + NumberOfRequests + " REQUESTS --------------- " +
-                        "\n Secret Exfiltrated (" + stopWatch.Elapsed.Minutes + "m " + stopWatch.Elapsed.Seconds + "s) : " + knownToken + "\n");
+                        "\n Secret Exfiltrated (" + stopWatch.Elapsed.Minutes + "m " + stopWatch.Elapsed.Seconds.ToString("D2") + "s) : " + knownToken + "\n");
             Console.Title = "SSL Exfiltration Services...  " + knownToken + " (" + NumberOfRequests + ")";
 
             Console.ReadLine();

