@@ -10,8 +10,7 @@ namespace SSLProxy
         internal static Socket InitializeSocketLibrary()
         {
             Chilkat.Socket listenSocket = new Chilkat.Socket();
-            //if (listenSocket.UnlockComponent("Start my 30-day Trial") != true)
-            if (listenSocket.UnlockComponent("PRADOASocket_DFyvPLW2GVDG") != true)
+            if (listenSocket.UnlockComponent("Start my 30-day Trial") != true)
             {
                 throw new Exception("Failed to unlock component");
             }
