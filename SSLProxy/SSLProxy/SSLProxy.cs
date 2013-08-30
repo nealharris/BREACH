@@ -20,12 +20,14 @@ namespace SSLProxy
             Socket outboundSocket = InitializeSocketLibrary();
             File.Delete(PacketRealTimeLog);
 
-            bool success = listenSocket.BindAndListen(443, 25);
-            if (success != true)
+            // Bind on port 443
+            if (listenSocket.BindAndListen(443, 25) != true)
             {
                 Console.WriteLine(listenSocket.LastErrorText + "\r\n");
                 return;
             }
+
+            Console.WriteLine("[BREACH SSL Relay ready on 443]\n");
 
             while (true)
             {
@@ -33,13 +35,13 @@ namespace SSLProxy
                 if (++i % 1000 == 0)
                 {
                     Console.Write("## RESET CLEANUP...");
-                    Thread.Sleep(1000);
-                    listenSocket.Close(90000);
-                    outboundSocket.Close(90000);
+                    Thread.Sleep(500);
+                    listenSocket.Close(10000);
+                    outboundSocket.Close(10000);
                     listenSocket = InitializeSocketLibrary();
                     outboundSocket = InitializeSocketLibrary();
 
-                    if (listenSocket.BindAndListen(443, 25) != true)
+                    if (!listenSocket.BindAndListen(443, 25))
                     {
                         Console.WriteLine(listenSocket.LastErrorText + "\r\n");
                         return;
@@ -69,15 +71,14 @@ namespace SSLProxy
                 if (connectedSocket == null)
                 {
                     Console.WriteLine(listenSocket.LastErrorText);
-                    return;
+                    continue; // return;
                 }
 
                 // Connect to outbound target
-                outboundSocket.Connect(TargetIP, 443, false, 10000);
-                if (success != true)
+                if (!outboundSocket.Connect(TargetIP, 443, false, 10000))
                 {
                     Console.WriteLine(outboundSocket.LastErrorText + "\r\n");
-                    return;
+                    continue; // return;
                 }
 
                 //  Set maximum timeouts for reading an writing (in millisec)
@@ -105,19 +106,17 @@ namespace SSLProxy
 
                         try
                         {
-                            success = connectedSocket.AsyncReceiveBytes();
+                            if (!connectedSocket.AsyncReceiveBytes())
+                            {
+                                Console.WriteLine(connectedSocket.LastErrorText + "\r\n");
+                                continue; // return;
+                            }
                         }
                         catch (AccessViolationException e)
                         {
                             Console.WriteLine("## Error (002): " + e);
                             Thread.Sleep(100);
                             break;
-                        }
-
-                        if (success != true)
-                        {
-                            Console.WriteLine(connectedSocket.LastErrorText + "\r\n");
-                            return;
                         }
                     }
 
@@ -143,11 +142,10 @@ namespace SSLProxy
 
 
                             // Relay bytes to target serer
-                            success = outboundSocket.SendBytes(bytes);
-                            if (success != true)
+                            if (!outboundSocket.SendBytes(bytes))
                             {
                                 Console.WriteLine(connectedSocket.LastErrorText + "\r\n");
-                                return;
+                                continue; // return;
                             }
                         }
                     }
@@ -162,19 +160,17 @@ namespace SSLProxy
 
                         try
                         {
-                            success = outboundSocket.AsyncReceiveBytes();
+                            if (!outboundSocket.AsyncReceiveBytes())
+                            {
+                                Console.WriteLine("## Error (004) " + outboundSocket.LastErrorText + "\r\n");
+                                continue; // return;
+                            }
                         }
                         catch (System.AccessViolationException e)
                         {
                             Console.WriteLine("## Error (003): " + e);
                             Thread.Sleep(100);
                             break;
-                        }
-
-                        if (success != true)
-                        {
-                            Console.WriteLine("## Error (004) " + outboundSocket.LastErrorText + "\r\n");
-                            return;
                         }
                     }
 
@@ -193,15 +189,18 @@ namespace SSLProxy
 
                             // Real time packet log
                             LogPacketLength(PacketRealTimeLog, sequence + " " + bytes2.Length,
-                                FileMode.Append, FileAccess.Write, FileShare.Read
-                                );
+                                FileMode.Append, FileAccess.Write, FileShare.Read);
 
 
                             Console.Title = "received: " + received;
                             receivedSinceLastPush += bytes2.Length;
 
                             // Relay to client
-                            connectedSocket.SendBytes(bytes2);
+                            if (!connectedSocket.SendBytes(bytes2))
+                            {
+                                Console.WriteLine("## Error (005) " + connectedSocket.LastErrorText + "\r\n");
+                                continue; // return;
+                            }
                         }
 
                         else if (connectedSocket.IsConnected
@@ -226,6 +225,6 @@ namespace SSLProxy
             }
         }
 
-        
+
     }
 }
