@@ -10,9 +10,11 @@ This is intended for self-assessment only.  Don't do bad things.
 
 - MITM: This is not required for the PoC. Instead, we suggest a simple HOSTS entry to enable measurement of the encrypted traffic.
 
-- browserless
-At this time we provide a simple HTTP client that simulates browser behavior.
+- Browserless: At this time we provide a simple HTTP client that simulates browser behavior.
 The full-featured browser-based tool will follow.
+
+- Stream Ciphers: BREACH Basic is not Block-Cipher aware at the moment, this may be incorporated into future releases. 
+For testing purposes a cipher such as RC4 would be recommended.
 
 
 ## HOW TO USE IT
@@ -36,7 +38,7 @@ The full-featured browser-based tool will follow.
 3. Edit `KeySpace` in `BREACH Basic.cs` to reflect the target secret's alphabet.
 4. Edit `TargetURL` in `BREACH Basic.cs`.
 5. Edit `canary` to specify your bootstrapping sequence in 'BREACH Basic.cs'.
-6. Compile & Run
+6. Compile & Run.
 
 ### How to contribute:
 Fork this repo.  Make some awesome changes.  Send us a pull request.
