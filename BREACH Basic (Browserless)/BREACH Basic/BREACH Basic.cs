@@ -41,7 +41,7 @@ namespace BREACHBasic
             bool ForceRecoveryMode = false;
 
             // Initialize
-            HttpGet("https://malbot.net/poc/?ae=Item&t=IPM.Note&a=New&id=NALCanary=");
+            HttpGet(TargetURL + "&Initialize");
             DeletePacketLog();
             stopWatch.Start();
 
