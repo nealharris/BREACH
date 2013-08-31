@@ -2,7 +2,7 @@
 
 
 ## WHAT IS IT
--------------
+
 BREACH Basic is a PoC, browser-less tool (for self-assessment and educational purposes) featuring only the basic BREACH oracle. 
 We will soon release the more elaborated Browser-based prototype shown at BlackHat as well as custom ARP spoofing toolset. 
 
@@ -14,7 +14,7 @@ For additional details, please refer to the 'Am I Affected' section at http://br
 
 
 ## RELEVANT NOTES
------------------
+
 - MITM: This is not required for the PoC. Instead, we suggest a simple HOSTS entry to enable measurement of the encrypted traffic.
 
 - Browser-less: A browser is not required for evaluating impact. 
@@ -29,7 +29,7 @@ For testing purposes a cipher such as RC4 would be recommended.
 
 
 ## HOW TO USE IT
-----------------
+
 ### Requirements:
 1. Windows OS (7+ tested)
 2. .NET 3.5+ Framework
@@ -60,6 +60,6 @@ While this page does not feature authentication or any useful functionality, it 
 
 
 ## CONTACT
-----------
+
 Paper+Slides: http://breachattack.com
 Email: contact@breachattack.com
