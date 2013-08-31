@@ -15,14 +15,14 @@ For additional details, please refer to the 'Am I Affected' section at http://br
 
 RELEVANT NOTES
 ===============
-# MITM: This is not required for the PoC. Instead, we suggest a simple HOSTS entry to enable measurement of the encrypted traffic.
+- MITM: This is not required for the PoC. Instead, we suggest a simple HOSTS entry to enable measurement of the encrypted traffic.
 
-# Browser-less: A browser is not required for evaluating impact. 
+- Browser-less: A browser is not required for evaluating impact. 
 At this time we provide a simple HTTP client that simulates browser behavior (The tool does not look at the responses).
 The full-featured browser-based BREACH will follow.
 
 
-# Stream Ciphers: BREACH Basic is not Block-Cipher aware at the moment, this might be incorporated into future releases. 
+- Stream Ciphers: BREACH Basic is not Block-Cipher aware at the moment, this might be incorporated into future releases. 
 For testing purposes a cipher such as RC4 would be recommended.
 
 
