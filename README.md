@@ -61,5 +61,5 @@ While this page does not feature authentication or any useful functionality, it 
 
 ## CONTACT
 
-Paper+Slides: http://breachattack.com
-Email: contact@breachattack.com
+- Paper+Slides: http://breachattack.com
+- Email: contact@breachattack.com
