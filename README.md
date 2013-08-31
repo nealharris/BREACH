@@ -23,7 +23,7 @@ The full-featured browser-based tool will follow.
 
 
 ### How to run: 
-1. Unzip `BREACH Basic (precompiled).zip`.
+1. Build the projects to get the executables.
 2. Run `(echo. && echo 127.0.0.1 malbot.net) >> %windir%\system32\drivers\etc\hosts` in a command shell with admin privs.
 3. Launch `SSLProxy.exe`.
 4. Launch `BREACH Basic.exe`.
