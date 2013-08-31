@@ -1,7 +1,7 @@
-As of August 2013 we are releasing “BREACH Basic”
+# As of August 2013 we are releasing “BREACH Basic”
 
 
-WHAT IS IT
+## WHAT IS IT
 ==========
 BREACH Basic is a PoC, browser-less tool (for self-assessment and educational purposes) featuring only the basic BREACH oracle. 
 We will soon release the more elaborated Browser-based prototype shown at BlackHat as well as custom ARP spoofing toolset. 
@@ -13,7 +13,7 @@ For additional details, please refer to the 'Am I Affected' section at http://br
 
 
 
-RELEVANT NOTES
+## RELEVANT NOTES
 ===============
 - MITM: This is not required for the PoC. Instead, we suggest a simple HOSTS entry to enable measurement of the encrypted traffic.
 
@@ -28,7 +28,7 @@ For testing purposes a cipher such as RC4 would be recommended.
 
 
 
-HOW TO USE IT
+## HOW TO USE IT
 ============
 Requirements:
 1. Windows OS (7+ tested)
@@ -40,7 +40,7 @@ The PoC is automatically wired up to extract a secret from a sample page (malbot
 While this page does not feature authentication or any useful functionality, it demonstrates a secret can be extracted from encrypted traffic. 
 
 
-# How to run: 
+### How to run: 
 1. Launch cmd.exe with administrator privileges
 2. Type:  (echo. && echo 127.0.0.1 malbot.net) >> %windir%\system32\drivers\etc\hosts
 3. Launch "SSLProxy.exe"
@@ -48,7 +48,7 @@ While this page does not feature authentication or any useful functionality, it 
 5. Verify the secret extracted is correct ( view-source:https://malbot.net/poc/ )
 
 
-# How to customize:
+### How to customize:
 1. Edit your hosts file entry with your new target
 2. Edit 'TargetIP' address in 'SSLProxy.cs'
 3. Edit 'KeySpace' in 'BREACH Basic.cs'
@@ -59,7 +59,7 @@ While this page does not feature authentication or any useful functionality, it 
 
 
 
-CONTACT
+## CONTACT
 ========
 Paper+Slides: http://breachattack.com
 Email: contact@breachattack.com
