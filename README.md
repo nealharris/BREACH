@@ -27,7 +27,7 @@ The full-featured browser-based tool will follow.
 2. Run `(echo. && echo 127.0.0.1 malbot.net) >> %windir%\system32\drivers\etc\hosts` in a command shell with admin privs.
 3. Launch `SSLProxy.exe`.
 4. Launch `BREACH Basic.exe`.
-5. Verify the secret extracted is correct. ( view-source:https://malbot.net/poc/ )
+5. Verify the secret extracted is correct. (Take a look at the source of https://malbot.net/poc/.)
 
 
 ### How to customize:
