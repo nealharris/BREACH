@@ -13,7 +13,7 @@ This is intended for self-assessment only.  Don't do bad things.
 - Browserless: At this time we provide a simple HTTP client that simulates browser behavior.
 The full-featured browser-based tool will follow.
 
-- Stream Ciphers: The tool isn't smart enough to work against block ciphers yet.
+- Block Ciphers: The tool isn't smart enough to work against block ciphers yet.
 Maybe you can send us a pull request to fix this!
 
 
