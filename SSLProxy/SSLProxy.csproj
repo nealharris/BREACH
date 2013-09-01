@@ -36,7 +36,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="ChilkatDotNet2">
-      <HintPath>..\ChilkatDotNet2.dll</HintPath>
+      <HintPath>.\ChilkatDotNet2.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />

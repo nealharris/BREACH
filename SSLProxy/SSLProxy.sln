@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSLProxy", "SSLProxy\SSLProxy.csproj", "{9899A008-8CB8-4CD4-8C6B-0312A01415F2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SSLProxy", "SSLProxy.csproj", "{9899A008-8CB8-4CD4-8C6B-0312A01415F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
