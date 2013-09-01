@@ -13,8 +13,8 @@ This is intended for self-assessment only.  Don't do bad things.
 - Browserless: At this time we provide a simple HTTP client that simulates browser behavior.
 The full-featured browser-based tool will follow.
 
-- Stream Ciphers: BREACH Basic is not Block-Cipher aware at the moment, this may be incorporated into future releases. 
-For testing purposes a cipher such as RC4 would be recommended.
+- Stream Ciphers: The tool isn't smart enough to work against block ciphers yet.
+Maybe you can send us a pull request to fix this!
 
 
 ## HOW TO USE IT
@@ -25,7 +25,7 @@ For testing purposes a cipher such as RC4 would be recommended.
 
 
 ### How to run: 
-1. Build the projects to get the executables or download the precompiled binaries at http://breachattack.com/precompiled/
+1. Build the projects to get the executables, download them at http://breachattack.com/precompiled/.
 2. Run `(echo. && echo 127.0.0.1 malbot.net) >> %windir%\system32\drivers\etc\hosts` in a command shell with admin privs.
 3. Launch `SSLProxy.exe`.
 4. Launch `BREACH Basic.exe`.
