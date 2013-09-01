@@ -10,13 +10,12 @@ This is intended for self-assessment only.  Don't do bad things.
 
 - MITM: This is not required for the PoC. Instead, we suggest a simple HOSTS entry to enable measurement of the encrypted traffic.
 
-- Browserless
-At this time we provide a simple HTTP client that simulates browser behavior.
+- Browserless: At this time we provide a simple HTTP client that simulates browser behavior.
 The full-featured browser-based tool will follow.
 
-- Stream Ciphers Only (for now)
-The current version isn't smart enough to deal with block ciphers.  We're
-working on this.  Maybe you can beat us to it; send us a pull request!
+- Stream Ciphers: BREACH Basic is not Block-Cipher aware at the moment, this may be incorporated into future releases. 
+For testing purposes a cipher such as RC4 would be recommended.
+
 
 ## HOW TO USE IT
 ### Requirements:
@@ -26,7 +25,7 @@ working on this.  Maybe you can beat us to it; send us a pull request!
 
 
 ### How to run: 
-1. Build the projects to get the executables.
+1. Build the projects to get the executables or download the precompiled binaries at http://breachattack.com/precompiled/
 2. Run `(echo. && echo 127.0.0.1 malbot.net) >> %windir%\system32\drivers\etc\hosts` in a command shell with admin privs.
 3. Launch `SSLProxy.exe`.
 4. Launch `BREACH Basic.exe`.
@@ -39,7 +38,7 @@ working on this.  Maybe you can beat us to it; send us a pull request!
 3. Edit `KeySpace` in `BREACH Basic.cs` to reflect the target secret's alphabet.
 4. Edit `TargetURL` in `BREACH Basic.cs`.
 5. Edit `canary` to specify your bootstrapping sequence in 'BREACH Basic.cs'.
-6. Compile & Run
+6. Compile & Run.
 
 ### How to contribute:
 Fork this repo.  Make some awesome changes.  Send us a pull request.
