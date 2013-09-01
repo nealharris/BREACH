@@ -10,10 +10,13 @@ This is intended for self-assessment only.  Don't do bad things.
 
 - MITM: This is not required for the PoC. Instead, we suggest a simple HOSTS entry to enable measurement of the encrypted traffic.
 
-- browserless
+- Browserless
 At this time we provide a simple HTTP client that simulates browser behavior.
 The full-featured browser-based tool will follow.
 
+- Stream Ciphers Only (for now)
+The current version isn't smart enough to deal with block ciphers.  We're
+working on this.  Maybe you can beat us to it; send us a pull request!
 
 ## HOW TO USE IT
 ### Requirements:
