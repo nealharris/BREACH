@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BREACH Basic", "BREACH Basic.csproj", "{F119EB18-CB69-400B-9284-A188EFC7A93D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BREACH Basic", "BREACH Basic\BREACH Basic.csproj", "{F119EB18-CB69-400B-9284-A188EFC7A93D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
