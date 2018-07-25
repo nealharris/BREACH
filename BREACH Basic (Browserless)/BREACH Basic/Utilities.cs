@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Net;
+using System.Text;
 
 namespace BREACHBasic
 {
@@ -51,7 +52,9 @@ namespace BREACHBasic
             try
             {
                 Uri myUri = new Uri(uri, true);
+                Console.WriteLine(uri);
                 webRequest = WebRequest.Create(myUri);
+                
             }
             catch (NotSupportedException)
             {
@@ -63,7 +66,7 @@ namespace BREACHBasic
             webRequest.Headers["Cache-Control"] = "no-cache";
             webRequest.Headers["Accept-Encoding"] = "gzip,deflate";
             webRequest.Headers["Pragma"] = "no-cache";
-
+            ((HttpWebRequest)webRequest).AutomaticDecompression = DecompressionMethods.Deflate | DecompressionMethods.GZip;
             ((HttpWebRequest)webRequest).Accept = "*/*";
             ((HttpWebRequest)webRequest).UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.4 (BREACH 1.0, like Gecko) Chrome/22.0.1229.94 Safari/537.4";
             ((HttpWebRequest)webRequest).KeepAlive = true;
@@ -79,7 +82,10 @@ namespace BREACHBasic
                             NumberOfRequests++;
 
                             // We don't actually need to see the result, so just return null
-                            sr.ReadToEnd();
+                            String responseString = sr.ReadToEnd();
+                            
+                          
+                            //Console.WriteLine(responseString);
                             sr.Close();
                             return null;
                         }

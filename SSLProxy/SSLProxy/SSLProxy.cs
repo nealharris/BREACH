@@ -7,7 +7,7 @@ namespace SSLProxy
 {
     partial class Program
     {
-        static string TargetIP = "157.56.163.101"; // malbot.net
+        static string TargetIP = "52.232.64.131"; // malbot.net
         static string PacketLengthLog = Path.Combine(Path.GetTempPath(), "readBytesClosed.txt");
         static string PacketRealTimeLog = Path.Combine(Path.GetTempPath(), "readBytesRealTime.txt");
 
