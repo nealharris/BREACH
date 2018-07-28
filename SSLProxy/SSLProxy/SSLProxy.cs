@@ -8,8 +8,8 @@ namespace SSLProxy
     partial class Program
     {
         static string TargetIP = "52.232.64.131"; // malbot.net
-        static string PacketLengthLog = Path.Combine(Path.GetTempPath(), "readBytesClosed.txt");
-        static string PacketRealTimeLog = Path.Combine(Path.GetTempPath(), "readBytesRealTime.txt");
+        static string PacketLengthLog = Path.Combine(Environment.CurrentDirectory, "readBytesClosed.txt");
+        static string PacketRealTimeLog = Path.Combine(Environment.CurrentDirectory, "readBytesRealTime.txt");
 
         static void Main(string[] args)
         {
@@ -49,7 +49,7 @@ namespace SSLProxy
                     }
 
                     GC.WaitForFullGCComplete();
-                    Console.WriteLine(" Done!");
+                    Console.WriteLine("GC Done!");
                 }
 
                 Chilkat.Socket connectedSocket = null;
@@ -127,6 +127,7 @@ namespace SSLProxy
                         requestBytes = connectedSocket.AsyncReceivedBytes;
                         if (requestBytes != null && requestBytes.Length > 0)
                         {
+                            Console.WriteLine("Response Bytes Total");
                             Console.WriteLine(" >>> rcv: " + responseBytesTotal);
 
                             if (responseBytesTotal != 0
@@ -183,10 +184,19 @@ namespace SSLProxy
                         receivingServer = false;
                         responseBytes = outboundSocket.AsyncReceivedBytes;
 
-                        if (responseBytes != null && responseBytes.Length > 0)
+                        if (responseBytes != null && responseBytes.Length > 0 && outboundSocket.AsyncReceiveFinished)
                         {
+
+                            //here!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
                             received += responseBytes.Length;
+                            Console.WriteLine("Response Bytes");
                             Console.WriteLine("<<" + responseBytes.Length);
+                            //if(responseBytes.Length != 1460 && responseBytes.Length != 1446 && responseBytes.Length != 2906)
+                            //{
+                            //    Console.WriteLine("Winner?");
+                            //    Console.ReadKey();
+                            //}
                             sequence++;
 
                             // Real time packet log (logging each individual packet length for BREACH)
